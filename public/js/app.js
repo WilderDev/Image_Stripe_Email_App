@@ -15,17 +15,13 @@ imageInputDOM.addEventListener('change', async (e) => {
   formData.append('image', imageFile);
 
   try {
-    const {
-      data: {
-        image: { src },
-      },
-    } = await axios.post(`${url}/upload`, formData, {
+    const res = await axios.post(`${url}/upload`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
 
-    imageValue = src;
+    imageValue = res.data.data.image.src;
   } catch (error) {
     imageValue = null;
     console.log(error);
