@@ -36,12 +36,16 @@ async function createNewPrivateImage(req, res) {
 async function uploadSingleImageToCloudinary(req, res) {
   // TODO
 
+  console.log('req.body:', req.body);
+
   // Send Successful Response
   return successfulRes({
     res,
     status: 200,
     data: {
-      image: {}, // TODO
+      image: {
+        src: 'taco.jpg',
+      }, // TODO
     },
   });
 }
