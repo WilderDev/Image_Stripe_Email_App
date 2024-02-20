@@ -2,7 +2,6 @@
 const router = require('express').Router();
 
 const {
-  getSinglePrivateImage,
   createNewPrivateImage,
   uploadSingleImageToCloudinary,
 } = require('../controllers/private-images.controllers.js');
@@ -10,9 +9,6 @@ const {
 // * ROUTES
 // POST Single Private Image
 router.post('/', createNewPrivateImage);
-
-// GET Single Private Image (By Id)
-router.get('/:id', getSinglePrivateImage);
 
 // POST Single Image Upload to Cloudinary
 router.post('/upload', uploadSingleImageToCloudinary);

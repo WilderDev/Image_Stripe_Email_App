@@ -4,27 +4,35 @@ const { successfulRes, unsuccessfulRes } = require('../lib/response');
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 const nodemailer = require('nodemailer');
+const stripe = require('stripe')(process.env.STRIPE_SECRET);
 
 // * CONTROLLERS
-// TODO: Get a Single Image - GET: /api/v1/private-images/:id
-async function getSinglePrivateImage(req, res) {
-  // TODO
-
-  // Send Successful Response
-  return successfulRes({
-    res,
-    data: {
-      image: {
-        // TODO
-      },
-    },
-  });
-}
-
 // Create Single Image - POST: /api/v1/private-images
 async function createNewPrivateImage(req, res) {
   // ! SAVE TO DB
   const newSecretImageFromDB = await Image.create(req.body);
+
+  // ! CREATE STRIPE PAYMENT LINK
+  // Create a new price point for our secret image product
+  const price = await stripe.prices.create({
+    currency: 'usd',
+    unit_amount: ccFee(newSecretImageFromDB.price * 100),
+    product: 'prod_PatZ5if6a0fIYV',
+  });
+
+  console.log('price:', price);
+
+  // Create a new payment session with that price id
+  const paymentLink = await stripe.paymentLinks.create({
+    line_items: [
+      {
+        price: price.id,
+        quantity: 1,
+      },
+    ],
+  });
+
+  console.log('paymentLink:', paymentLink);
 
   // ! SEND EMAIL
   const transporter = nodemailer.createTransport({
@@ -47,7 +55,7 @@ async function createNewPrivateImage(req, res) {
 
       <h2>Want more?</h2>
 
-      <a href="https://google.com">CLICK HERE!</a>
+      <a href="${paymentLink.url}">CLICK HERE!</a>
      `,
   });
 
@@ -87,7 +95,6 @@ async function uploadSingleImageToCloudinary(req, res) {
 
 // * EXPORTS
 module.exports = {
-  getSinglePrivateImage,
   createNewPrivateImage,
   uploadSingleImageToCloudinary,
 };
