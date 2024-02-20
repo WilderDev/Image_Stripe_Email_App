@@ -5,6 +5,7 @@ const recipientInputDOM = document.querySelector('#recipient');
 const subjectInputDOM = document.querySelector('#subject');
 const priceInputDOM = document.querySelector('#price');
 const imageInputDOM = document.querySelector('#image');
+const submitBtn = document.querySelector('#submitter');
 
 const containerDOM = document.querySelector('.container');
 let imageValue;
@@ -21,7 +22,11 @@ imageInputDOM.addEventListener('change', async (e) => {
       },
     });
 
-    imageValue = res.data.data.image.src;
+    if (res) {
+      submitBtn.disabled = false;
+
+      imageValue = res.data.data.image.src;
+    }
   } catch (error) {
     imageValue = null;
     console.log(error);
