@@ -1,9 +1,11 @@
 // * IMPORTS
 const Image = require('../models/Image.model');
 const { successfulRes, unsuccessfulRes } = require('../lib/response');
+const cloudinary = require('cloudinary').v2;
+const fs = require('fs');
 
 // * CONTROLLERS
-// TODO: Get a Single Image - GET: /api/v1/images/:id
+// TODO: Get a Single Image - GET: /api/v1/private-images/:id
 async function getSinglePrivateImage(req, res) {
   // TODO
 
@@ -18,23 +20,30 @@ async function getSinglePrivateImage(req, res) {
   });
 }
 
-// TODO: Create Single Image - POST: /api/v1/images
+// Create Single Image - POST: /api/v1/private-images
 async function createNewPrivateImage(req, res) {
-  // TODO
+  const newSecretImageFromDB = await Image.create(req.body);
 
   // Send Successful Response
   return successfulRes({
     res,
     status: 201,
     data: {
-      image: {}, // TODO
+      image: newSecretImageFromDB,
     },
   });
 }
 
-// TODO: Create Single Image Upload - POST: /api/v1/images/upload
+// Create Single Image Upload - POST: /api/v1/private-images/upload
 async function uploadSingleImageToCloudinary(req, res) {
-  // TODO
+  const img = req.files.image.tempFilePath;
+
+  const result = await cloudinary.uploader.upload(img, {
+    folder: 'secret-images',
+    use_filename: true,
+  });
+
+  fs.unlinkSync(img);
 
   // Send Successful Response
   return successfulRes({
@@ -42,8 +51,8 @@ async function uploadSingleImageToCloudinary(req, res) {
     status: 200,
     data: {
       image: {
-        src: 'taco.jpg',
-      }, // TODO
+        src: result.secure_url,
+      },
     },
   });
 }

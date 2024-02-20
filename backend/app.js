@@ -1,21 +1,31 @@
 // * IMPORTS
-require('dotenv').config(); // TODO: Create .env File and Add MONGO_URI & PORT variables
+require('dotenv').config();
 require('express-async-errors');
 
 const path = require('path');
 const express = require('express');
 const app = express();
 
-// TODO: FILE IMAGE UPLOAD
-// TODO: Cloudinary (v2): https://console.cloudinary.com/pm/c-680c21cdfa7846b2ca10021acca735/getting-started
+const fileUpload = require('express-fileupload');
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: 'dqdt3b71o',
+  api_key: '893945678668897',
+  api_secret: 'zTaXHnfUwZ3n3IYWiPJkGCVriQs',
+});
 
 const connectToMongo = require('./lib/mongoose');
 const { PORT, SERVER_URL } = require('./lib/constants');
 
-// * MIDDLEWAREs
+// * MIDDLEWARES
 app.use(express.static('../public'));
 app.use(express.json()); // Body Parser
-// TODO: FILE IMAGE UPLOAD
+app.use(
+  fileUpload({
+    useTempFiles: true,
+  }),
+);
 
 // * ROUTES
 app.use('/api/v1/private-images', require('./routes/private-images.routes'));

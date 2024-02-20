@@ -8,11 +8,11 @@ const {
 } = require('../controllers/private-images.controllers.js');
 
 // * ROUTES
-// GET Single Private Image (By Id)
-router.get('/:id', getSinglePrivateImage);
-
 // POST Single Private Image
 router.post('/', createNewPrivateImage);
+
+// GET Single Private Image (By Id)
+router.get('/:id', getSinglePrivateImage);
 
 // POST Single Image Upload to Cloudinary
 router.post('/upload', uploadSingleImageToCloudinary);
